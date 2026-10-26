@@ -1,0 +1,6 @@
+.env
+.vscode/sftp.json
+test_cookie.txt
+storage/logs/*.log
+storage/cache/*
+!storage/cache/.gitkeep

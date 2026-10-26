@@ -1,0 +1,75 @@
+<?php
+/**
+ * Veen CLI (artisan-style)
+ *   php veen migrate
+ *   php veen migrate:fresh [--seed]
+ *   php veen db:seed
+ *   php veen db:create
+ *   php veen serve [port]
+ *   php veen routes
+ */
+require __DIR__ . '/bootstrap/app.php';
+
+use Veen\Core\Database\DB;
+use Veen\Core\Database\Migrator;
+
+$cmd = $argv[1] ?? 'help';
+$args = array_slice($argv, 2);
+$say = fn (string $m) => print($m . PHP_EOL);
+
+try {
+    switch ($cmd) {
+        case 'db:create':
+            $c = config('database');
+            $pdo = new PDO("mysql:host={$c['host']};port={$c['port']};charset=utf8mb4", $c['username'], $c['password']);
+            $name = str_replace('`', '', $c['database']);
+            $pdo->exec("CREATE DATABASE IF NOT EXISTS `$name` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+            $say("Database [$name] ready.");
+            break;
+
+        case 'migrate':
+            (new Migrator($say))->migrate();
+            break;
+
+        case 'migrate:fresh':
+            (new Migrator($say))->fresh();
+            if (in_array('--seed', $args, true)) {
+                $say('Seeding...');
+                (require __DIR__ . '/database/seeders/DatabaseSeeder.php')($say);
+            }
+            break;
+
+        case 'db:seed':
+            (require __DIR__ . '/database/seeders/DatabaseSeeder.php')($say);
+            break;
+
+        case 'serve':
+            $port = (int) ($args[0] ?? 8000);
+            $say("Veen HMS running at http://localhost:$port  (Ctrl+C to stop)");
+            passthru(escapeshellarg(PHP_BINARY) . " -S localhost:$port " . escapeshellarg(__DIR__ . '/server.php'));
+            break;
+
+        case 'routes':
+            $_SERVER['REQUEST_URI'] = '/';
+            $router = new Veen\Core\Router();
+            require __DIR__ . '/routes/web.php';
+            $say('Routes loaded OK.');
+            break;
+
+        case 'cache:flush':
+        case 'cache:clear':
+            \Veen\Core\Cache::flush();
+            if (function_exists('opcache_reset')) {
+                @opcache_reset();
+            }
+            $driver = strtoupper(\Veen\Core\Cache::driver());
+            $say("✔ System cache successfully flushed and reset ($driver cache cleared).");
+            break;
+
+        default:
+            $say("Veen HMS CLI\n\n  cache:flush        Flush and reset application runtime cache (Redis/File)\n  db:create          Create the database\n  migrate            Run pending migrations\n  migrate:fresh      Drop all tables and re-run migrations (--seed to seed)\n  db:seed            Seed demo data\n  serve [port]       Start the development server");
+    }
+} catch (Throwable $e) {
+    fwrite(STDERR, "\n  ✖ " . get_class($e) . ': ' . $e->getMessage() . "\n    " . $e->getFile() . ':' . $e->getLine() . "\n");
+    exit(1);
+}

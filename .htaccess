@@ -1,0 +1,11 @@
+# When the project folder itself is web-accessible (e.g. XAMPP htdocs/veen-hms),
+# send every request into /public so app code, .env and storage are never exposed.
+# In production, point the vhost DocumentRoot at /public instead.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+<FilesMatch "^\.env|\.(sql|log|md)$">
+    Require all denied
+</FilesMatch>
