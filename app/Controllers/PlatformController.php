@@ -127,14 +127,19 @@ class PlatformController extends Controller
         $settings = json_decode($tenant['settings'] ?? '{}', true) ?: [];
 
         $modules = [
-            'consultations' => (bool) $request->input('module_consultations', 0),
-            'pharmacy'      => (bool) $request->input('module_pharmacy', 0),
-            'lab'           => (bool) $request->input('module_lab', 0),
-            'inpatient'     => (bool) $request->input('module_inpatient', 0),
-            'billing'       => (bool) $request->input('module_billing', 0),
-            'queue'         => (bool) $request->input('module_queue', 0),
-            'appointments'  => (bool) $request->input('module_appointments', 0),
-            'reports'       => (bool) $request->input('module_reports', 0),
+            'consultations'   => (bool) $request->input('module_consultations', 0),
+            'pharmacy'        => (bool) $request->input('module_pharmacy', 0),
+            'lab'             => (bool) $request->input('module_lab', 0),
+            'inpatient'       => (bool) $request->input('module_inpatient', 0),
+            'billing'         => (bool) $request->input('module_billing', 0),
+            'queue'           => (bool) $request->input('module_queue', 0),
+            'appointments'    => (bool) $request->input('module_appointments', 0),
+            'reports'         => (bool) $request->input('module_reports', 0),
+            'clinic_kids'     => (bool) $request->input('module_clinic_kids', 0),
+            'clinic_maternal' => (bool) $request->input('module_clinic_maternal', 0),
+            'clinic_ccc'      => (bool) $request->input('module_clinic_ccc', 0),
+            'radiology'       => (bool) $request->input('module_radiology', 0),
+            'mortuary'        => (bool) $request->input('module_mortuary', 0),
         ];
 
         $settings['modules'] = $modules;

@@ -249,9 +249,11 @@ function user_can(string $ability): bool
     $permissions = [
         'doctor' => [
             'dashboard', 'consultations', 'clinical_emr', 'patients', 'appointments', 'inpatient', 'lab_view', 'reports_view',
+            'clinic_kids', 'clinic_maternal', 'clinic_ccc', 'radiology', 'mortuary',
         ],
         'nurse' => [
             'dashboard', 'queue', 'triage', 'patients', 'appointments', 'inpatient', 'consultations_view',
+            'clinic_kids', 'clinic_maternal', 'clinic_ccc', 'radiology',
         ],
         'cashier' => [
             'dashboard', 'billing', 'invoices', 'payments', 'claims', 'queue', 'patients', 'reports_view',
@@ -283,6 +285,10 @@ function tenant_can(string $module): bool
 
     $modules = $settings['modules'] ?? null;
     if ($modules === null || !is_array($modules)) {
+        return true;
+    }
+
+    if (!array_key_exists($module, $modules)) {
         return true;
     }
 

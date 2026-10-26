@@ -681,6 +681,11 @@ it("Restricts user roles and allows super admin to toggle pay-per-feature module
     assert(user_can('consultations') === true, "Doctor must have permission for consultations");
     assert(user_can('billing') === false, "Doctor must NOT have permission to access cashier billing");
     assert(user_can('pharmacy_pos') === false, "Doctor must NOT have permission for OTC POS");
+    assert(user_can('clinic_kids') === true, "Doctor must have permission for kids clinic");
+    assert(user_can('clinic_maternal') === true, "Doctor must have permission for maternal clinic");
+    assert(user_can('clinic_ccc') === true, "Doctor must have permission for CCC clinic");
+    assert(user_can('radiology') === true, "Doctor must have permission for radiology");
+    assert(user_can('mortuary') === true, "Doctor must have permission for mortuary");
 
     $cashierUser = new \App\Models\User();
     $cashierUser->role = 'cashier';
@@ -688,6 +693,18 @@ it("Restricts user roles and allows super admin to toggle pay-per-feature module
 
     assert(user_can('billing') === true, "Cashier must have permission for billing");
     assert(user_can('consultations') === false, "Cashier must NOT have permission for doctor consultations");
+    assert(user_can('clinic_kids') === false, "Cashier must NOT have permission for kids clinic");
+    assert(user_can('radiology') === false, "Cashier must NOT have permission for radiology");
+
+    $nurseUser = new \App\Models\User();
+    $nurseUser->role = 'nurse';
+    \Veen\Core\Auth::login($nurseUser);
+
+    assert(user_can('clinic_kids') === true, "Nurse must have permission for kids clinic");
+    assert(user_can('clinic_maternal') === true, "Nurse must have permission for maternal clinic");
+    assert(user_can('clinic_ccc') === true, "Nurse must have permission for CCC clinic");
+    assert(user_can('radiology') === true, "Nurse must have permission for radiology");
+    assert(user_can('mortuary') === false, "Nurse must NOT have permission for mortuary");
 
     // 2. Tenant Module Feature Flags
     $tenant = TenantManager::find(1);
@@ -695,17 +712,25 @@ it("Restricts user roles and allows super admin to toggle pay-per-feature module
 
     // By default, modules are enabled
     assert(tenant_can('pharmacy') === true, "Tenant module pharmacy is enabled by default");
+    assert(tenant_can('clinic_kids') === true, "Tenant module clinic_kids is enabled by default");
+    assert(tenant_can('radiology') === true, "Tenant module radiology is enabled by default");
 
-    // Super Admin updates tenant modules (disables inpatient, keeps others)
+    // Super Admin updates tenant modules (disables inpatient and radiology, keeps others)
     $platformCtrl = new \App\Controllers\PlatformController();
     $platformCtrl->updateModules(new Request([], [
-        'module_consultations' => 1,
-        'module_pharmacy'      => 1,
-        'module_inpatient'     => 0, // Disabled
-        'module_billing'       => 1,
-        'module_queue'         => 1,
-        'module_appointments'  => 1,
-        'module_reports'       => 1,
+        'module_consultations'   => 1,
+        'module_pharmacy'        => 1,
+        'module_lab'             => 1,
+        'module_inpatient'       => 0, // Disabled
+        'module_billing'         => 1,
+        'module_queue'           => 1,
+        'module_appointments'    => 1,
+        'module_reports'         => 1,
+        'module_clinic_kids'     => 1,
+        'module_clinic_maternal' => 1,
+        'module_clinic_ccc'      => 1,
+        'module_radiology'       => 0, // Disabled
+        'module_mortuary'        => 1,
     ]), 1);
 
     // Reload tenant
@@ -713,19 +738,31 @@ it("Restricts user roles and allows super admin to toggle pay-per-feature module
     TenantManager::set($reloadedTenant);
 
     assert(tenant_can('inpatient') === false, "Disabled inpatient module must return false");
+    assert(tenant_can('radiology') === false, "Disabled radiology module must return false");
     assert(tenant_can('pharmacy') === true, "Active pharmacy module must return true");
+    assert(tenant_can('mortuary') === true, "Active mortuary module must return true");
 
-    // Re-enable inpatient
+    // Re-enable all modules
     $platformCtrl->updateModules(new Request([], [
-        'module_consultations' => 1,
-        'module_pharmacy'      => 1,
-        'module_lab'           => 1,
-        'module_inpatient'     => 1,
-        'module_billing'       => 1,
-        'module_queue'         => 1,
-        'module_appointments'  => 1,
-        'module_reports'       => 1,
+        'module_consultations'   => 1,
+        'module_pharmacy'        => 1,
+        'module_lab'             => 1,
+        'module_inpatient'       => 1,
+        'module_billing'         => 1,
+        'module_queue'           => 1,
+        'module_appointments'    => 1,
+        'module_reports'         => 1,
+        'module_clinic_kids'     => 1,
+        'module_clinic_maternal' => 1,
+        'module_clinic_ccc'      => 1,
+        'module_radiology'       => 1,
+        'module_mortuary'        => 1,
     ]), 1);
+
+    $reloadedTenant = TenantManager::find(1);
+    TenantManager::set($reloadedTenant);
+    assert(tenant_can('inpatient') === true, "Re-enabled inpatient module must return true");
+    assert(tenant_can('radiology') === true, "Re-enabled radiology module must return true");
 });
 
 // TEST GROUP 16: PHARMACY SALES REPORT & STOCK MOVEMENTS
@@ -768,6 +805,9 @@ it("Allows hospital admin to provision custom roles, configure granular rights, 
     // 1. Render Roles Matrix
     $rolesResp = $staffCtrl->roles(new Request([]));
     assert(str_contains($rolesResp->content, "Hospital Roles & Access Control"), "Roles matrix must render cleanly");
+    assert(str_contains($rolesResp->content, "Clinic for Kids &amp; Immunizations"), "Roles matrix must contain Kids Clinic permission");
+    assert(str_contains($rolesResp->content, "Radiology &amp; MRI Diagnostic Imaging"), "Roles matrix must contain Radiology permission");
+    assert(str_contains($rolesResp->content, "Mortuary &amp; Deceased Registry"), "Roles matrix must contain Mortuary permission");
 
     // 2. Store custom role: e.g. Triage Specialist
     $testSlug = 'triage_officer_' . time();

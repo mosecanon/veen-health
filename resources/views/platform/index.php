@@ -341,6 +341,46 @@
           </div>
           <input type="checkbox" name="module_reports" id="mod_reports" value="1" style="width: 18px; height: 18px;">
         </label>
+
+        <label style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 8px; cursor: pointer;">
+          <div>
+            <strong>👶 Clinic for Kids & Child Welfare (CWC)</strong>
+            <div class="dim" style="font-size: 11px;">EPI vaccine schedules, developmental milestones, MUAC & growth charts</div>
+          </div>
+          <input type="checkbox" name="module_clinic_kids" id="mod_clinic_kids" value="1" style="width: 18px; height: 18px;">
+        </label>
+
+        <label style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 8px; cursor: pointer;">
+          <div>
+            <strong>🤰 Pregnant Women Clinic (ANC & Maternal Health)</strong>
+            <div class="dim" style="font-size: 11px;">Gravida/parity, trimester visits, PMTCT, birth plans & delivery log</div>
+          </div>
+          <input type="checkbox" name="module_clinic_maternal" id="mod_clinic_maternal" value="1" style="width: 18px; height: 18px;">
+        </label>
+
+        <label style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 8px; cursor: pointer;">
+          <div>
+            <strong>🎗️ HIV Comprehensive Care Centre (CCC)</strong>
+            <div class="dim" style="font-size: 11px;">ART regimens, CD4 / Viral Load suppression cascades, MMD refills & passports</div>
+          </div>
+          <input type="checkbox" name="module_clinic_ccc" id="mod_clinic_ccc" value="1" style="width: 18px; height: 18px;">
+        </label>
+
+        <label style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 8px; cursor: pointer;">
+          <div>
+            <strong>🩻 Radiology & Diagnostic Imaging (MRI, CT, X-Ray)</strong>
+            <div class="dim" style="font-size: 11px;">Inpatient MRI requisition, pre-scan safety checklist, porter transport & report verification</div>
+          </div>
+          <input type="checkbox" name="module_radiology" id="mod_radiology" value="1" style="width: 18px; height: 18px;">
+        </label>
+
+        <label style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 8px; cursor: pointer;">
+          <div>
+            <strong>🕊️ Mortuary & Deceased Registry</strong>
+            <div class="dim" style="font-size: 11px;">Inpatient & external deceased intake, cold room storage, pathology autopsy & release permits</div>
+          </div>
+          <input type="checkbox" name="module_mortuary" id="mod_mortuary" value="1" style="width: 18px; height: 18px;">
+        </label>
       </div>
 
       <div class="form-actions">
@@ -398,7 +438,7 @@ function openTenantModulesModal(t) {
   // If no settings exist yet, default all to true
   const isDefaultAll = (mods === null || typeof mods !== 'object');
 
-  const keys = ['consultations', 'pharmacy', 'lab', 'inpatient', 'billing', 'queue', 'appointments', 'reports'];
+  const keys = ['consultations', 'pharmacy', 'lab', 'inpatient', 'billing', 'queue', 'appointments', 'reports', 'clinic_kids', 'clinic_maternal', 'clinic_ccc', 'radiology', 'mortuary'];
   keys.forEach(k => {
     const el = document.getElementById('mod_' + k);
     if (el) {

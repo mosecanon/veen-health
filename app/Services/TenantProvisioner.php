@@ -202,12 +202,12 @@ class TenantProvisioner
 
                 // Seed Default Hospital Roles & Granular Permissions
                 $defaultRoles = [
-                    ['Medical Doctor / Physician', 'doctor', 'Clinical consultations, EMR notes, ICD-10 diagnoses, vitals, lab orders, and prescriptions.', ['clinical_emr','consultations','appointments','inpatient','patients','lab_view','reports_view']],
-                    ['Staff Nurse', 'nurse', 'Patient triage, vital signs, queue management, and inpatient bed care.', ['queue','triage','patients','appointments','inpatient','consultations_view']],
+                    ['Medical Doctor / Physician', 'doctor', 'Clinical consultations, EMR notes, ICD-10 diagnoses, vitals, lab orders, and prescriptions.', ['clinical_emr','consultations','appointments','inpatient','patients','lab_view','reports_view','clinic_kids','clinic_maternal','clinic_ccc','radiology','mortuary']],
+                    ['Staff Nurse', 'nurse', 'Patient triage, vital signs, queue management, and inpatient bed care.', ['queue','triage','patients','appointments','inpatient','consultations_view','clinic_kids','clinic_maternal','clinic_ccc','radiology']],
                     ['Pharmacist / Dispenser', 'pharmacist', 'Pharmacy OTC Point of Sale, prescription dispensing, inventory batches, and cash register.', ['pharmacy','pharmacy_pos','pharmacy_inventory','patients','reports_view']],
                     ['Hospital Cashier', 'cashier', 'Patient invoicing, cash and mobile money collection, receipts, and insurance claims.', ['billing','invoices','payments','claims','queue','patients','reports_view']],
                     ['Laboratory Technologist', 'lab_tech', 'LIMS test processing, specimen collection, and result verification.', ['lab','laboratory','specimen','results','patients']],
-                    ['Hospital Administrator', 'hospital_admin', 'Full administrative management of hospital staff, wards, finance, HR, and configuration.', ['clinical_emr','consultations','pharmacy','pharmacy_pos','pharmacy_inventory','lab','laboratory','inpatient','billing','queue','appointments','hr','expenses','reports','reports_view','staff_admin']],
+                    ['Hospital Administrator', 'hospital_admin', 'Full administrative management of hospital staff, wards, finance, HR, and configuration.', ['clinical_emr','consultations','pharmacy','pharmacy_pos','pharmacy_inventory','lab','laboratory','inpatient','billing','queue','appointments','hr','expenses','reports','reports_view','staff_admin','clinic_kids','clinic_maternal','clinic_ccc','radiology','mortuary']],
                 ];
                 foreach ($defaultRoles as [$rName, $rSlug, $rDesc, $rPerms]) {
                     DB::statement(
